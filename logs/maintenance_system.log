@@ -1,0 +1,117 @@
+2025-12-04 18:24:28,131 - __main__ - INFO - ================================================================================
+2025-12-04 18:24:28,132 - __main__ - INFO - Initializing CMAPSS Predictive Maintenance System
+2025-12-04 18:24:28,132 - __main__ - INFO - ================================================================================
+2025-12-04 18:24:28,133 - __main__ - INFO - Initializing vector database (backend: chromadb)...
+2025-12-04 18:24:28,133 - src.vector_db.query - INFO - Initializing vector DB with backend: chromadb
+2025-12-04 18:24:28,133 - src.vector_db.embedder - INFO - FailureEmbedder initialized with dim=128
+2025-12-04 18:24:30,495 - src.vector_db.store - INFO - ChromaDB store initialized: failure_patterns
+2025-12-04 18:24:30,495 - src.vector_db.query - INFO - Vector DB initialized successfully
+2025-12-04 18:24:30,495 - __main__ - INFO - Vector database initialized successfully
+2025-12-04 18:24:30,495 - __main__ - INFO - System initialization complete
+2025-12-04 18:24:30,495 - __main__ - INFO - ================================================================================
+2025-12-04 18:24:30,495 - __main__ - WARNING - No input provided, using random test data
+2025-12-04 18:24:30,882 - __main__ - INFO - Running single observation analysis...
+2025-12-04 18:24:30,882 - src.workflow - INFO - Creating maintenance workflow graph...
+2025-12-04 18:24:30,885 - src.workflow - INFO - Workflow graph created successfully
+2025-12-04 18:24:30,893 - src.workflow - INFO - Workflow compiled successfully
+2025-12-04 18:24:30,893 - src.workflow - INFO - ================================================================================
+2025-12-04 18:24:30,893 - src.workflow - INFO - Starting maintenance analysis workflow
+2025-12-04 18:24:30,893 - src.workflow - INFO - ================================================================================
+2025-12-04 18:24:30,894 - src.workflow - INFO - Executing workflow...
+2025-12-04 18:24:30,896 - src.agents.prediction_agent - INFO - PredictionAgent initialized
+2025-12-04 18:24:30,896 - src.agents.prediction_agent - INFO - PredictionAgent running predictions...
+2025-12-04 18:24:30,900 - src.agents.prediction_agent - ERROR - PredictionAgent failed: No module named 'lightgbm'
+2025-12-04 18:24:30,901 - src.agents.diagnosis_agent - INFO - DiagnosisAgent initialized with top_k=5
+2025-12-04 18:24:30,902 - src.agents.diagnosis_agent - INFO - DiagnosisAgent running diagnosis...
+2025-12-04 18:24:30,983 - src.vector_db.store - INFO - Retrieved 0 results from ChromaDB
+2025-12-04 18:24:30,984 - src.vector_db.query - INFO - Retrieved 0 similar failure cases
+2025-12-04 18:24:30,984 - src.agents.diagnosis_agent - INFO - Diagnosis completed: General
+2025-12-04 18:24:30,985 - src.agents.risk_agent - INFO - RiskAgent initialized
+2025-12-04 18:24:30,985 - src.agents.risk_agent - INFO - RiskAgent computing risk level...
+2025-12-04 18:24:30,985 - src.agents.risk_agent - INFO - Risk assessment completed: LOW (score: 0.00)
+2025-12-04 18:24:30,986 - src.agents.scheduling_agent - INFO - SchedulingAgent initialized
+2025-12-04 18:24:30,986 - src.agents.scheduling_agent - INFO - SchedulingAgent generating maintenance schedule...
+2025-12-04 18:24:30,986 - src.agents.scheduling_agent - INFO - Maintenance schedule completed: ROUTINE
+2025-12-04 18:24:30,987 - src.agents.explanation_agent - INFO - ExplanationAgent initialized
+2025-12-04 18:24:30,987 - src.agents.explanation_agent - INFO - ExplanationAgent generating final report...
+2025-12-04 18:24:30,988 - src.agents.explanation_agent - INFO - Final report generated successfully
+2025-12-04 18:24:30,989 - src.workflow - ERROR - Workflow completed with errors: No module named 'lightgbm'
+2025-12-04 18:24:30,989 - src.workflow - INFO - ================================================================================
+2025-12-04 18:26:01,547 - __main__ - INFO - ================================================================================
+2025-12-04 18:26:01,548 - __main__ - INFO - Initializing CMAPSS Predictive Maintenance System
+2025-12-04 18:26:01,548 - __main__ - INFO - ================================================================================
+2025-12-04 18:26:01,548 - __main__ - INFO - Initializing vector database (backend: chromadb)...
+2025-12-04 18:26:01,548 - src.vector_db.query - INFO - Initializing vector DB with backend: chromadb
+2025-12-04 18:26:01,548 - src.vector_db.embedder - INFO - FailureEmbedder initialized with dim=128
+2025-12-04 18:26:02,706 - src.vector_db.store - INFO - ChromaDB store initialized: failure_patterns
+2025-12-04 18:26:02,707 - src.vector_db.query - INFO - Vector DB initialized successfully
+2025-12-04 18:26:02,707 - __main__ - INFO - Vector database initialized successfully
+2025-12-04 18:26:02,707 - __main__ - INFO - System initialization complete
+2025-12-04 18:26:02,707 - __main__ - INFO - ================================================================================
+2025-12-04 18:26:02,707 - __main__ - WARNING - No input provided, using random test data
+2025-12-04 18:26:02,722 - __main__ - INFO - Running single observation analysis...
+2025-12-04 18:26:02,722 - src.workflow - INFO - Creating maintenance workflow graph...
+2025-12-04 18:26:02,723 - src.workflow - INFO - Workflow graph created successfully
+2025-12-04 18:26:02,729 - src.workflow - INFO - Workflow compiled successfully
+2025-12-04 18:26:02,730 - src.workflow - INFO - ================================================================================
+2025-12-04 18:26:02,730 - src.workflow - INFO - Starting maintenance analysis workflow
+2025-12-04 18:26:02,730 - src.workflow - INFO - ================================================================================
+2025-12-04 18:26:02,730 - src.workflow - INFO - Executing workflow...
+2025-12-04 18:26:02,732 - src.agents.prediction_agent - INFO - PredictionAgent initialized
+2025-12-04 18:26:02,732 - src.agents.prediction_agent - INFO - PredictionAgent running predictions...
+2025-12-04 18:26:23,105 - src.agents.prediction_agent - ERROR - PredictionAgent failed: invalid load key, '\x07'.
+2025-12-04 18:26:23,107 - src.agents.diagnosis_agent - INFO - DiagnosisAgent initialized with top_k=5
+2025-12-04 18:26:23,107 - src.agents.diagnosis_agent - INFO - DiagnosisAgent running diagnosis...
+2025-12-04 18:26:23,142 - src.vector_db.store - INFO - Retrieved 0 results from ChromaDB
+2025-12-04 18:26:23,142 - src.vector_db.query - INFO - Retrieved 0 similar failure cases
+2025-12-04 18:26:23,142 - src.agents.diagnosis_agent - INFO - Diagnosis completed: General
+2025-12-04 18:26:23,143 - src.agents.risk_agent - INFO - RiskAgent initialized
+2025-12-04 18:26:23,144 - src.agents.risk_agent - INFO - RiskAgent computing risk level...
+2025-12-04 18:26:23,144 - src.agents.risk_agent - INFO - Risk assessment completed: LOW (score: 0.00)
+2025-12-04 18:26:23,144 - src.agents.scheduling_agent - INFO - SchedulingAgent initialized
+2025-12-04 18:26:23,144 - src.agents.scheduling_agent - INFO - SchedulingAgent generating maintenance schedule...
+2025-12-04 18:26:23,145 - src.agents.scheduling_agent - INFO - Maintenance schedule completed: ROUTINE
+2025-12-04 18:26:23,145 - src.agents.explanation_agent - INFO - ExplanationAgent initialized
+2025-12-04 18:26:23,145 - src.agents.explanation_agent - INFO - ExplanationAgent generating final report...
+2025-12-04 18:26:23,146 - src.agents.explanation_agent - INFO - Final report generated successfully
+2025-12-04 18:26:23,146 - src.workflow - ERROR - Workflow completed with errors: invalid load key, '\x07'.
+2025-12-04 18:26:23,147 - src.workflow - INFO - ================================================================================
+2025-12-04 18:28:13,540 - __main__ - INFO - ================================================================================
+2025-12-04 18:28:13,541 - __main__ - INFO - Initializing CMAPSS Predictive Maintenance System
+2025-12-04 18:28:13,541 - __main__ - INFO - ================================================================================
+2025-12-04 18:28:13,541 - __main__ - INFO - Initializing vector database (backend: chromadb)...
+2025-12-04 18:28:13,541 - src.vector_db.query - INFO - Initializing vector DB with backend: chromadb
+2025-12-04 18:28:13,541 - src.vector_db.embedder - INFO - FailureEmbedder initialized with dim=128
+2025-12-04 18:28:15,329 - src.vector_db.store - INFO - ChromaDB store initialized: failure_patterns
+2025-12-04 18:28:15,331 - src.vector_db.query - INFO - Vector DB initialized successfully
+2025-12-04 18:28:15,331 - __main__ - INFO - Vector database initialized successfully
+2025-12-04 18:28:15,331 - __main__ - INFO - System initialization complete
+2025-12-04 18:28:15,331 - __main__ - INFO - ================================================================================
+2025-12-04 18:28:15,331 - __main__ - WARNING - No input provided, using random test data
+2025-12-04 18:28:15,346 - __main__ - INFO - Running single observation analysis...
+2025-12-04 18:28:15,346 - src.workflow - INFO - Creating maintenance workflow graph...
+2025-12-04 18:28:15,347 - src.workflow - INFO - Workflow graph created successfully
+2025-12-04 18:28:15,352 - src.workflow - INFO - Workflow compiled successfully
+2025-12-04 18:28:15,352 - src.workflow - INFO - ================================================================================
+2025-12-04 18:28:15,352 - src.workflow - INFO - Starting maintenance analysis workflow
+2025-12-04 18:28:15,352 - src.workflow - INFO - ================================================================================
+2025-12-04 18:28:15,352 - src.workflow - INFO - Executing workflow...
+2025-12-04 18:28:15,356 - src.agents.prediction_agent - INFO - PredictionAgent initialized
+2025-12-04 18:28:15,356 - src.agents.prediction_agent - INFO - PredictionAgent running predictions...
+2025-12-04 18:28:17,937 - src.agents.prediction_agent - INFO - Predictions completed: {'fd001': {'rul': 77.81449317114536, 'failure_probability': 0.002317787905771332}, 'fd002': {'rul': 88.85419391220132, 'failure_probability': 4.91991934430332e-05}, 'fd003': {'rul': 116.68989768222404, 'failure_probability': 0.005271629288628517, 'predicted_component': '0', 'component_probs': {'0': 0.5183441410911415, '1': 0.1691404815624192, '2': 0.3125153773464393}}, 'ensemble': {'avg_rul': 94.45286158852359, 'max_failure_probability': 0.005271629288628517}}
+2025-12-04 18:28:17,938 - src.agents.diagnosis_agent - INFO - DiagnosisAgent initialized with top_k=5
+2025-12-04 18:28:17,938 - src.agents.diagnosis_agent - INFO - DiagnosisAgent running diagnosis...
+2025-12-04 18:28:17,982 - src.vector_db.store - INFO - Retrieved 0 results from ChromaDB
+2025-12-04 18:28:17,982 - src.vector_db.query - INFO - Retrieved 0 similar failure cases
+2025-12-04 18:28:17,982 - src.agents.diagnosis_agent - INFO - Diagnosis completed: 0
+2025-12-04 18:28:17,984 - src.agents.risk_agent - INFO - RiskAgent initialized
+2025-12-04 18:28:17,984 - src.agents.risk_agent - INFO - RiskAgent computing risk level...
+2025-12-04 18:28:17,984 - src.agents.risk_agent - INFO - Risk assessment completed: LOW (score: 0.06)
+2025-12-04 18:28:17,985 - src.agents.scheduling_agent - INFO - SchedulingAgent initialized
+2025-12-04 18:28:17,986 - src.agents.scheduling_agent - INFO - SchedulingAgent generating maintenance schedule...
+2025-12-04 18:28:17,986 - src.agents.scheduling_agent - INFO - Maintenance schedule completed: ROUTINE
+2025-12-04 18:28:17,986 - src.agents.explanation_agent - INFO - ExplanationAgent initialized
+2025-12-04 18:28:17,986 - src.agents.explanation_agent - INFO - ExplanationAgent generating final report...
+2025-12-04 18:28:17,987 - src.agents.explanation_agent - INFO - Final report generated successfully
+2025-12-04 18:28:17,988 - src.workflow - INFO - Workflow completed successfully
+2025-12-04 18:28:17,988 - src.workflow - INFO - ================================================================================
