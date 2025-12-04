@@ -1,6 +1,18 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { AlertTriangle, CheckCircle, Clock, Activity, FileText, Settings } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Clock, Activity, FileText, Settings, Cpu } from 'lucide-react';
+
+const componentLabel = (value) => {
+    if (value === null || value === undefined) return "Unknown";
+    const v = String(value).trim();
+    if (v === "0") return "Healthy";
+    if (v === "1") return "HPC Degradation";
+    if (v === "2") return "Fan Degradation";
+    if (/^Healthy/i.test(v)) return "Healthy";
+    if (/^HPC/i.test(v)) return "HPC Degradation";
+    if (/^Fan/i.test(v)) return "Fan Degradation";
+    return v;
+};
 
 const Card = ({ title, icon: Icon, children, className = "" }) => (
     <motion.div
@@ -30,17 +42,40 @@ const RiskIndicator = ({ level, score }) => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center py-4">
-            <div className={`text-4xl font-bold ${colors[level] || "text-slate-400"} mb-2`}>
-                {level} RISK
+        <div className="flex flex-col gap-3 py-3">
+            <div className="flex items-center justify-between">
+                <span className="text-xs tracking-[0.18em] uppercase text-secondary">Overall Risk</span>
+                <span className={`text-sm font-semibold ${colors[level] || "text-slate-300"}`}>
+                    {level || "UNKNOWN"}
+                </span>
             </div>
-            <div className="w-full bg-slate-700 h-4 rounded-full overflow-hidden">
+            <div className="metric-bar">
                 <div
-                    className={`h-full ${bgColors[level] || "bg-slate-500"} transition-all duration-1000`}
-                    style={{ width: `${Math.min(score * 100, 100)}%` }}
+                    className="metric-bar-fill"
+                    style={{ width: `${Math.min((score || 0) * 100, 100)}%` }}
                 />
             </div>
-            <p className="mt-2 text-slate-400">Risk Score: {(score * 100).toFixed(1)}%</p>
+            <div className="flex items-center justify-between text-xs text-secondary">
+                <span>Score: {((score || 0) * 100).toFixed(1)}%</span>
+                <span className="opacity-80">0% safe · 100% critical</span>
+            </div>
+        </div>
+    );
+};
+
+const SimpleSparkline = ({ values }) => {
+    if (!values || values.length === 0) return null;
+    const max = Math.max(...values.map((v) => Math.abs(v))) || 1;
+    return (
+        <div className="sparkline">
+            {values.map((v, idx) => (
+                <div
+                    // eslint-disable-next-line react/no-array-index-key
+                    key={idx}
+                    className="sparkline-bar"
+                    style={{ height: `${10 + (Math.abs(v) / max) * 28}%` }}
+                />
+            ))}
         </div>
     );
 };
@@ -49,83 +84,189 @@ const ResultsDisplay = ({ results }) => {
     if (!results) return null;
 
     const { risk_assessment, diagnosis, maintenance_schedule, final_report, predictions } = results;
+    const fd001 = predictions?.fd001;
+    const fd002 = predictions?.fd002;
+    const fd003 = predictions?.fd003;
+
+    const rulValues = [
+        fd001?.rul ?? 0,
+        fd002?.rul ?? 0,
+        fd003?.rul ?? 0,
+    ];
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Risk Assessment */}
-            <Card title="Risk Assessment" icon={AlertTriangle} className="md:col-span-1">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Risk & Ensemble Agent */}
+            <Card title="Risk & Ensemble Agent" icon={AlertTriangle} className="lg:col-span-1">
                 <RiskIndicator
                     level={risk_assessment?.risk_level}
                     score={risk_assessment?.risk_score}
                 />
-                <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
-                    <div className="bg-slate-800/50 p-3 rounded">
-                        <span className="text-slate-400 block">RUL Estimate</span>
-                        <span className="text-xl font-mono text-white">{risk_assessment?.avg_rul?.toFixed(0)} cycles</span>
+
+                <div className="mt-5 grid grid-cols-2 gap-4 text-sm">
+                    <div className="bg-slate-950/40 border border-[var(--border-color)]/60 rounded-xl p-3">
+                        <span className="text-secondary block text-xs mb-1.5">Ensemble RUL</span>
+                        <div className="flex items-baseline gap-1">
+                            <span className="text-2xl font-mono text-white">
+                                {risk_assessment?.avg_rul?.toFixed(0)}
+                            </span>
+                            <span className="text-[0.7rem] text-secondary">cycles</span>
+                        </div>
                     </div>
-                    <div className="bg-slate-800/50 p-3 rounded">
-                        <span className="text-slate-400 block">Confidence</span>
-                        <span className="text-xl font-mono text-white">
+                    <div className="bg-slate-950/40 border border-[var(--border-color)]/60 rounded-xl p-3">
+                        <span className="text-secondary block text-xs mb-1.5">Diagnostic Confidence</span>
+                        <span className="text-2xl font-mono text-white">
                             {diagnosis?.confidence != null
                                 ? `${(diagnosis.confidence * 100).toFixed(0)}%`
                                 : "N/A"}
                         </span>
                     </div>
                 </div>
+
+                <div className="mt-5">
+                    <span className="text-xs text-secondary block mb-2">Model RUL Spread (FD001 / FD002 / FD003)</span>
+                    <SimpleSparkline values={rulValues} />
+                </div>
             </Card>
 
-            {/* Diagnosis */}
-            <Card title="Diagnosis" icon={Activity} className="md:col-span-1">
-                <div className="space-y-4">
-                    <div>
-                        <span className="text-slate-400 text-sm">Probable Component</span>
-                        <div className="text-lg font-medium text-white flex items-center gap-2">
-                            <Settings size={16} />
-                            {diagnosis?.probable_component}
-                        </div>
-                    </div>
-
-                    <div>
-                        <span className="text-slate-400 text-sm">Anomalies Detected</span>
-                        <div className="flex flex-wrap gap-2 mt-1">
-                            {diagnosis?.anomalies?.length > 0 ? (
-                                diagnosis.anomalies.map((anomaly, idx) => (
-                                    <span key={idx} className="px-2 py-1 bg-red-500/20 text-red-300 text-xs rounded border border-red-500/30">
-                                        {anomaly}
+            {/* Prediction Agent (per-model) */}
+            <Card title="Prediction Agent (Models)" icon={Cpu} className="lg:col-span-2">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                    {[
+                        { label: "FD001", data: fd001 },
+                        { label: "FD002", data: fd002 },
+                        { label: "FD003", data: fd003 },
+                    ].map((item) => (
+                        <div
+                            key={item.label}
+                            className="bg-slate-950/40 border border-[var(--border-color)]/60 rounded-xl p-3 flex flex-col gap-2"
+                        >
+                            <div className="flex items-center justify-between">
+                                <span className="text-secondary text-[0.7rem] tracking-[0.16em] uppercase">
+                                    {item.label}
+                                </span>
+                                <span className="text-[0.65rem] px-2 py-0.5 rounded-full bg-[var(--accent-soft)] text-[var(--accent-secondary)]">
+                                    RUL + P(fail)
+                                </span>
+                            </div>
+                            <div className="flex items-baseline gap-1">
+                                <span className="text-lg font-mono text-white">
+                                    {item.data?.rul != null ? item.data.rul.toFixed(0) : "–"}
+                                </span>
+                                <span className="text-[0.65rem] text-secondary">cycles</span>
+                            </div>
+                            <div className="metric-bar mt-1.5">
+                                <div
+                                    className="metric-bar-fill"
+                                    style={{
+                                        width: `${Math.min((item.data?.failure_probability || 0) * 100, 100)}%`,
+                                    }}
+                                />
+                            </div>
+                            <div className="flex items-center justify-between text-[0.65rem] text-secondary pt-0.5">
+                                <span>P(failure): {((item.data?.failure_probability || 0) * 100).toFixed(1)}%</span>
+                                <span className="opacity-70">
+                                    {item.data?.rul != null ? `RUL ${item.data.rul.toFixed(0)}` : "No signal"}
+                                </span>
+                            </div>
+                            {item.label === "FD003" && fd003?.component_probs && (
+                                <div className="mt-1 pt-1 border-t border-slate-700/40">
+                                    <span className="text-[0.65rem] text-secondary block mb-1">
+                                        Component probabilities:
                                     </span>
-                                ))
-                            ) : (
-                                <span className="text-slate-500 italic">None detected</span>
+                                    <div className="flex flex-wrap gap-1.5">
+                                        {Object.entries(fd003.component_probs)
+                                            .sort((a, b) => b[1] - a[1])
+                                            .map(([comp, prob]) => (
+                                                <span
+                                                    key={comp}
+                                                    className="px-1.5 py-0.5 rounded-full bg-slate-900/80 border border-slate-700/60 text-[0.65rem] text-slate-200"
+                                                >
+                                                    {componentLabel(comp)}: {(prob * 100).toFixed(0)}%
+                                                </span>
+                                            ))}
+                                    </div>
+                                </div>
                             )}
-                        </div>
-                    </div>
-                </div>
-            </Card>
-
-            {/* Maintenance Schedule */}
-            <Card title="Maintenance Schedule" icon={Clock} className="md:col-span-1">
-                <div className={`
-          p-4 rounded-lg border mb-4 text-center font-bold
-          ${maintenance_schedule?.maintenance_window === 'IMMEDIATE' ? 'bg-red-900/20 border-red-500 text-red-400' :
-                        maintenance_schedule?.maintenance_window === 'SOON' ? 'bg-yellow-900/20 border-yellow-500 text-yellow-400' :
-                            'bg-green-900/20 border-green-500 text-green-400'}
-        `}>
-                    {maintenance_schedule?.maintenance_window} ACTION REQUIRED
-                </div>
-                <div className="space-y-2">
-                    {maintenance_schedule?.recommended_actions?.map((action, idx) => (
-                        <div key={idx} className="flex items-start gap-2 text-sm text-slate-300">
-                            <CheckCircle size={14} className="mt-1 text-blue-400 shrink-0" />
-                            {action}
                         </div>
                     ))}
                 </div>
             </Card>
 
-            {/* Final Report */}
-            <Card title="Agentic Report" icon={FileText} className="md:col-span-2">
+            {/* Diagnosis Agent */}
+            <Card title="Diagnosis Agent" icon={Activity} className="lg:col-span-1">
+                <div className="space-y-4 text-sm">
+                    <div>
+                        <span className="text-secondary text-xs block mb-1">Probable Component</span>
+                        <div className="text-lg font-medium text-white flex items-center gap-2">
+                            <Settings size={16} />
+                            {componentLabel(diagnosis?.probable_component || "General")}
+                        </div>
+                        {diagnosis?.predicted_component && (
+                            <p className="text-[0.7rem] text-secondary mt-0.5">
+                                Model prediction: {componentLabel(diagnosis.predicted_component)}
+                            </p>
+                        )}
+                    </div>
+
+                    <div>
+                        <span className="text-secondary text-xs block mb-1">Anomalies Detected</span>
+                        <div className="flex flex-wrap gap-2 mt-1">
+                            {diagnosis?.anomalies?.length > 0 ? (
+                                diagnosis.anomalies.map((anomaly, idx) => (
+                                    // eslint-disable-next-line react/no-array-index-key
+                                    <span
+                                        key={idx}
+                                        className="px-2 py-1 bg-rose-500/15 text-rose-200 text-[0.7rem] rounded-full border border-rose-400/40"
+                                    >
+                                        {anomaly}
+                                    </span>
+                                ))
+                            ) : (
+                                <span className="text-slate-500 italic text-xs">None detected</span>
+                            )}
+                        </div>
+                    </div>
+
+                    {diagnosis?.reason && (
+                        <div className="mt-2">
+                            <span className="text-secondary text-xs block mb-1">Agent explanation</span>
+                            <p className="text-xs text-slate-200/90 leading-relaxed">
+                                {diagnosis.reason}
+                            </p>
+                        </div>
+                    )}
+                </div>
+            </Card>
+
+            {/* Scheduling Agent */}
+            <Card title="Scheduling Agent" icon={Clock} className="lg:col-span-1">
+                <div
+                    className={`
+          p-4 rounded-xl border mb-4 text-center font-semibold text-sm tracking-wide
+          ${maintenance_schedule?.maintenance_window === 'IMMEDIATE'
+            ? 'bg-red-900/30 border-red-400/60 text-red-200'
+            : maintenance_schedule?.maintenance_window === 'SOON'
+                ? 'bg-amber-900/30 border-amber-400/60 text-amber-100'
+                : 'bg-emerald-900/25 border-emerald-400/60 text-emerald-100'}
+        `}
+                >
+                    {maintenance_schedule?.maintenance_window || 'ROUTINE'} ACTION REQUIRED
+                </div>
+                <div className="space-y-2 text-sm">
+                    {maintenance_schedule?.recommended_actions?.map((action, idx) => (
+                        <div key={action} className="flex items-start gap-2 text-slate-200 text-xs">
+                            <CheckCircle size={14} className="mt-0.5 text-[var(--accent-secondary)] shrink-0" />
+                            <span>{action}</span>
+                        </div>
+                    ))}
+                </div>
+            </Card>
+
+            {/* Explanation Agent (LLM report) */}
+            <Card title="Explanation / Report Agent" icon={FileText} className="lg:col-span-3">
                 <div className="prose prose-invert prose-sm max-w-none">
-                    <div className="bg-slate-800/50 p-4 rounded-lg border border-slate-700 text-slate-300 leading-relaxed whitespace-pre-wrap">
+                    <div className="bg-slate-950/60 p-4 rounded-xl border border-[var(--border-color)] text-slate-200 leading-relaxed whitespace-pre-wrap max-h-[360px] overflow-auto">
                         {final_report?.narrative || "No report generated."}
                     </div>
                 </div>

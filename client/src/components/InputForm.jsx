@@ -33,36 +33,49 @@ const InputForm = ({ onAnalyze, isLoading }) => {
             animate={{ opacity: 1, y: 0 }}
             className="glass-panel p-6"
         >
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex justify-between items-start mb-5 gap-4">
                 <div>
+                    <div className="chip mb-2">
+                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                        Realtime CMAPSS Snapshot
+                    </div>
                     <h2 className="text-xl font-semibold text-white">Sensor Observation</h2>
-                    <p className="text-xs text-slate-400 mt-1">Enter 24 comma-separated float values</p>
+                    <p className="text-xs text-secondary mt-1">
+                        Paste or edit 24 comma-separated sensor readings from the engine.
+                    </p>
                 </div>
                 <button
+                    type="button"
                     onClick={handleReset}
-                    className="text-sm text-slate-400 hover:text-white flex items-center gap-1 transition-colors"
+                    className="text-xs px-3 py-1.5 rounded-full border border-slate-600/70 bg-slate-900/60 hover:bg-slate-800/80 text-slate-200 flex items-center gap-1 transition-colors"
                 >
-                    <RotateCcw size={14} /> Reset Default
+                    <RotateCcw size={14} /> Reset sample
                 </button>
             </div>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="space-y-3">
                 <textarea
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    className="w-full h-32 bg-slate-800/50 border border-slate-600 rounded-lg p-3 text-slate-200 font-mono text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none transition-all"
-                    placeholder="Enter comma-separated sensor readings..."
+                    className="w-full h-32 bg-[var(--bg-input)] border border-[var(--border-color)]/70 rounded-xl p-3 text-slate-100 font-mono text-xs focus:ring-2 focus:ring-[var(--accent-secondary)] focus:border-transparent outline-none resize-none transition-all shadow-inner"
+                    placeholder="e.g. -0.0007, -0.0004, 100.0, ... (24 values total)"
                 />
 
-                <div className="mt-4 flex justify-end">
+                <div className="flex items-center justify-between text-[0.7rem] text-secondary/80">
+                    <span>Tip: keep a CSV snippet from your pipeline and paste here for quick what-if analysis.</span>
+                    <span>Expected length: 24 features</span>
+                </div>
+
+                <div className="pt-2 flex justify-end">
                     <button
                         type="submit"
                         disabled={isLoading}
                         className={`
-              flex items-center gap-2 px-6 py-2 rounded-lg font-medium text-white transition-all
+              flex items-center gap-2 px-6 py-2 rounded-full font-medium text-white text-sm tracking-wide
+              border border-transparent transition-all shadow-lg shadow-purple-700/40
               ${isLoading
-                                ? 'bg-slate-600 cursor-not-allowed'
-                                : 'bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-500/20 active:scale-95'}
+                                ? 'bg-slate-700/80 cursor-not-allowed'
+                                : 'bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-secondary)] hover:opacity-90 active:scale-95'}
             `}
                     >
                         {isLoading ? (
@@ -73,7 +86,7 @@ const InputForm = ({ onAnalyze, isLoading }) => {
                         ) : (
                             <>
                                 <Play size={18} />
-                                Run Analysis
+                                Run Agentic Analysis
                             </>
                         )}
                     </button>

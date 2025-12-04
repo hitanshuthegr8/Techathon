@@ -11,6 +11,7 @@ sys.path.append(str(Path(__file__).parent.parent.parent))
 from src.vector_db.query import query_similar_failures
 from src.utils.logger import get_logger
 from src.utils.llm_service import llm_service
+from src.utils.constants import ComponentType
 
 logger = get_logger(__name__)
 
@@ -63,6 +64,9 @@ class DiagnosisAgent:
                 similar_cases
             )
             
+            # Infer human-readable anomalies from the probable component
+            anomalies = self._infer_anomalies(probable_component, component_probs)
+
             # Generate reasoning
             reason = self._generate_reasoning(
                 probable_component,
@@ -75,6 +79,7 @@ class DiagnosisAgent:
                 "predicted_component": predicted_component,
                 "component_probabilities": component_probs,
                 "similar_cases": similar_cases,
+                "anomalies": anomalies,
                 "reason": reason,
                 "confidence": self._calculate_confidence(similar_cases, component_probs)
             }
@@ -152,22 +157,76 @@ class DiagnosisAgent:
     ) -> str:
         """
         Generate human-readable reasoning for the diagnosis using Gemini.
+
+        This agent is grounded in the FD003 fault-mode mapping:
+        - Component 0 → Healthy (no failure)
+        - Component 1 → HPC Degradation (High-Pressure Compressor)
+        - Component 2 → Fan Degradation (turbofan fan blades)
         """
+        fd003_mapping = {
+            "0": "Healthy (no component failure)",
+            "1": "HPC Degradation (High-Pressure Compressor)",
+            "2": "Fan Degradation (turbofan fan blades)",
+        }
+        probable_desc = fd003_mapping.get(str(probable_component), str(probable_component))
+        predicted_desc = fd003_mapping.get(str(predicted_component), str(predicted_component))
+
         prompt = f"""
-        You are a Diagnostic Agent. Explain the reasoning for identifying '{probable_component}' as the failing component.
-        
+        You are a Diagnostic Agent for NASA's CMAPSS FD003 turbofan dataset.
+
+        FAULT MODE MAPPING (FD003):
+        - 0 → Healthy (no component failure)
+        - 1 → HPC Degradation (High-Pressure Compressor losing efficiency)
+        - 2 → Fan Degradation (turbofan fan blades degrading or damaged)
+
         CONTEXT:
-        - Model Prediction: {predicted_component}
-        - Historical Similar Cases: {similar_cases}
-        
-        INSTRUCTIONS:
-        - Explain why {probable_component} was chosen.
-        - Cite the historical data evidence (similarity scores).
-        - If the model prediction differs from history, explain how you resolved the conflict (usually history/majority vote wins).
-        - Keep it concise (2-3 sentences).
+        - Probable Component (decision): {probable_component} → {probable_desc}
+        - Raw Model Prediction (classifier argmax): {predicted_component} → {predicted_desc}
+        - Retrieved Similar Cases: {similar_cases}
+
+        TASK:
+        - Explain clearly why the system decided on {probable_desc} as the failing mode.
+        - Explicitly mention whether this corresponds to Healthy, HPC degradation, or Fan degradation.
+        - Use retrieved cases (and their similarity scores) as evidence when possible.
+        - If the model prediction (argmax) differs from history, describe how the conflict was resolved.
+        - Keep the explanation compact (2–4 sentences) but technically precise.
         """
-        
+
         return llm_service.generate_text(prompt)
+
+    def _infer_anomalies(
+        self,
+        probable_component: str,
+        component_probs: Dict[str, float]
+    ) -> list[str]:
+        """
+        Heuristically infer human-readable anomaly tags from the FD003 component prediction.
+
+        Component interpretation (FD003):
+        - 0 → Healthy (no anomaly)
+        - 1 → HPC Degradation
+        - 2 → Fan Degradation
+        """
+        anomalies: list[str] = []
+
+        label = str(probable_component)
+        max_prob = 0.0
+        if component_probs:
+            try:
+                max_prob = float(max(component_probs.values()))
+            except (TypeError, ValueError):
+                max_prob = 0.0
+
+        # Only emit anomaly tags when the classifier has at least moderate confidence
+        if max_prob < 0.4:
+            return anomalies
+
+        if label in ("1", ComponentType.HPC, "HPC"):
+            anomalies.append("HPC degradation signature detected")
+        elif label in ("2", ComponentType.FAN, "Fan"):
+            anomalies.append("Fan degradation signature detected")
+
+        return anomalies
     
     def _calculate_confidence(
         self,

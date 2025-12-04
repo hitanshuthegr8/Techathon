@@ -119,11 +119,20 @@ class FailureEmbedder:
             else:
                 features.extend([0.0, 0.0])
         
-        # Component probabilities (FD003)
+        # Component probabilities (FD003) – support both numeric and textual keys.
         if "fd003" in predictions:
             comp_probs = predictions["fd003"].get("component_probs", {})
-            for comp_name in ["Healthy", "HPC", "Fan"]:
-                features.append(comp_probs.get(comp_name, 0.0))
+
+            def get_prob(keys):
+                for k in keys:
+                    if k in comp_probs:
+                        return comp_probs[k]
+                return 0.0
+
+            # 0 → Healthy, 1 → HPC, 2 → Fan
+            features.append(get_prob(["Healthy", "0"]))
+            features.append(get_prob(["HPC", "1"]))
+            features.append(get_prob(["Fan", "2"]))
         else:
             features.extend([0.0, 0.0, 0.0])
         
