@@ -26,7 +26,36 @@
 > [!TIP]
 > **Live Demo**: Watch the system diagnose engine failures in real-time!
 >
-> ![Demo Placeholder](https://via.placeholder.com/800x400/0f172a/38bdf8?text=Replace+with+demo.gif)
+> <div align="center">
+>   <img src="assets/dashboard_overview.jpg" alt="Command Center" width="100%" />
+> </div>
+
+## 📸 Interface Preview
+
+<div align="center">
+  <table>
+    <tr>
+      <td align="center">
+        <b>Real-time Sensor Input</b><br/>
+        <img src="assets/sensor_input.jpg" alt="Sensor Input" width="400" />
+      </td>
+      <td align="center">
+        <b>Risk & Ensemble Analysis</b><br/>
+        <img src="assets/risk_analysis.jpg" alt="Risk Analysis" width="400" />
+      </td>
+    </tr>
+    <tr>
+      <td align="center">
+        <b>Service Scheduler</b><br/>
+        <img src="assets/scheduler.jpg" alt="Scheduler" width="400" />
+      </td>
+      <td align="center">
+        <b>Command Center</b><br/>
+        <img src="assets/dashboard_overview.jpg" alt="Dashboard" width="400" />
+      </td>
+    </tr>
+  </table>
+</div>
 
 ## 📖 Overview
 
@@ -200,5 +229,7 @@ predictive-maintenance-system/
 ---
 
 <div align="center">
-  <p>Made with ❤️ by  Team Hackstreet</p>
+  <br/>
+  <img src="assets/team_logo.png" alt="Team Hackstreet" width="120" />
+  <h3>Made with ❤️ by Team Hackstreet</h3>
 </div>
